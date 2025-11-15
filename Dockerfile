@@ -13,7 +13,7 @@ RUN --mount=type=cache,target=/var/cache/apt \
 ENV PATH="/root/.cargo/bin:${PATH}"
 
 
-COPY requirement.txt main.py /app/
+COPY requirements.txt main.py /app/
 
 RUN pip install --upgrade pip && \
     pip install --only-binary=:all: -r requirements.txt
