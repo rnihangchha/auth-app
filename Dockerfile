@@ -1,4 +1,4 @@
-FROM python:3.13.0rc2-bookworm AS auth_ser
+FROM python:slim-bookworm AS auth_ser
 
 WORKDIR /app
 
