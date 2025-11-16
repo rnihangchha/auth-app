@@ -16,7 +16,7 @@ ENV PATH="/root/.cargo/bin:${PATH}"
 COPY requirements.txt main.py /app/
 
 RUN pip install --upgrade pip && \
-    pip install --only-binary=:all: -r requirements.txt
+    pip install --only-binary=:all: --no-binary=asyncpg -r requirements.txt
 
 ENTRYPOINT ["python", "main.py"]
 
