@@ -1,22 +1,29 @@
-FROM python:slim-bookworm AS auth_ser
+FROM python:3.13-alpine AS auth_ser
 
 WORKDIR /app
 
-# Install system dependencies with caching
-RUN --mount=type=cache,target=/var/cache/apt \
-    apt-get update && \
-    apt-get install -y  build-essential curl git libssl-dev pkg-config rustc && \
-    curl https://sh.rustup.rs -sSf | sh -s -- -y && \
-    rm -rf /var/lib/apt/lists/*
+# Install system dependencies
+RUN apk update && apk upgrade && \
+    apk add --no-cache \
+        build-base \
+        cargo \
+        curl \
+        git \
+        openssl-dev \
+        pkgconfig 
+        
 
-# Update PATH for Rust
-ENV PATH="/root/.cargo/bin:${PATH}"
+# Note: Alpine has rust/cargo in repositories, no need for rustup
 
-
-COPY requirements.txt main.py /app/
+COPY requirements.txt .
 
 RUN pip install --upgrade pip && \
-    pip install --only-binary=:all: --no-binary=asyncpg -r requirements.txt
+    pip install --no-cache-dir -r requirements.txt
 
+COPY main.py .
+
+RUN adduser -D -u 1000 appuser && \
+    chown -R appuser:appuser /app
+USER appuser
+EXPOSE 3002
 ENTRYPOINT ["python", "main.py"]
-
